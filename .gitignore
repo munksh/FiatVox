@@ -1,0 +1,9 @@
+build*/
+RPMS/
+SRPMS/
+*.pro.user
+*.autosave
+Makefile
+moc_*.cpp
+qrc_*.cpp
+*.o

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fiat Vox — preview</title>
+<style>
+  /* Ambience-driven. Everything below reads from these, and JS swaps them
+     when you pick a different ambience — exactly what Theme.* does on the
+     device. Only green/amber/red are fixed, because they carry meaning. */
+  :root {
+    --primary-rgb:   255,255,255;
+    --highlight-rgb: 122,199,222;
+    --card:          rgb(20,20,20);
+    --green:         #7FA65C;
+    --amber:         #C87941;
+    --red:           #A0403A;
+    --wallpaper:     radial-gradient(120% 90% at 50% 0%, #2a3742 0%, #10161c 70%);
+
+    --primary:    rgb(var(--primary-rgb));
+    --secondary:  rgba(var(--primary-rgb), .6);
+    --cardborder: rgba(var(--primary-rgb), .45);
+    --dotidle:    rgba(var(--primary-rgb), .22);
+    --highlight:  rgb(var(--highlight-rgb));
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; height: 100%;
+    background: var(--wallpaper) fixed;
+    color: var(--primary);
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    overflow: hidden;
+    -webkit-user-select: none; user-select: none;
+    transition: background .35s linear, color .35s linear;
+  }
+
+  #face {
+    position: relative; height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 3.2vh;
+    padding: 0 4.5vw 6vh;
+  }
+
+  /* ---- the instrument: one solid card on the ambience ---- */
+  #card {
+    position: relative;
+    width: 100%;
+    border-radius: 4.6vh;
+    background: var(--card);
+    border: 2px solid var(--cardborder);
+    padding: 5vh 4vw;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: background .35s linear, border-color .35s linear;
+  }
+
+  /* ---- the seven dots ---- */
+  #dots { display: flex; gap: 3.4vw; margin-bottom: 4vh; }
+  .dot {
+    position: relative;
+    width: 3.4vw; height: 3.4vw; max-width: 22px; max-height: 22px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .dot i {
+    display: block; border-radius: 50%;
+    width: 62%; height: 62%;
+    background: var(--dotidle); opacity: .7;
+    transition: width .14s ease-out, height .14s ease-out,
+                background .16s linear, opacity .16s linear;
+  }
+  .dot.centre i { opacity: 1; }
+  .dot.lit i { width: 100%; height: 100%; opacity: 1; }
+  .dot b {
+    position: absolute; border-radius: 50%;
+    width: 240%; height: 240%;
+    opacity: 0; transition: opacity .18s linear;
+  }
+  .dot.lit b { opacity: .18; }
+
+  /* ---- the letter ----
+     Centred on itself. The sharp hangs off its right edge instead of sharing
+     the centring, so C and C♯ put the C in one place. */
+  #letterwrap {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    line-height: .78;
+    opacity: .3; transition: opacity .3s linear;
+  }
+  #letterwrap.live { opacity: 1; }
+  #idledot {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 3.4vh; height: 3.4vh; border-radius: 50%;
+    background: var(--primary);
+  }
+  #letterwrap.live #idledot { display: none; }
+  #letter {
+    position: relative; display: inline-block;
+    font-size: 26vh; font-weight: 200; letter-spacing: -.02em;
+    transition: color .25s linear;
+  }
+  #letterwrap.sounding #letter { color: var(--highlight); }
+  #sharp {
+    position: absolute; left: 100%; top: .06em;
+    font-size: .34em; font-weight: 300;
+    color: rgba(var(--primary-rgb), .7);
+    margin-left: -.03em;
+    visibility: hidden;
+  }
+  #sharp.on { visibility: visible; }
+
+  /* ---- the hertz ---- */
+  #hz {
+    margin-top: 4vh;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 2.9vh; color: var(--secondary);
+    opacity: .5; transition: opacity .3s linear;
+  }
+  #hz.live { opacity: 1; }
+  #cents {
+    margin-top: .9vh; min-height: 2vh;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 1.7vh; color: var(--secondary);
+    transition: color .2s linear;
+  }
+
+  /* ---- input level, one hairline along the bottom of the card ---- */
+  #level {
+    position: absolute; bottom: 1.6vh; left: 50%; transform: translateX(-50%);
+    height: 2px; width: 2px; border-radius: 1px;
+    background: rgba(var(--highlight-rgb), .6);
+    transition: width .09s linear;
+  }
+
+  /* ---- the pill, straight from Fiat Lux ---- */
+  #ref {
+    padding: .9vh 3.2vw;
+    border-radius: 999px;
+    background: rgba(var(--primary-rgb), .15);
+    border: 1px solid rgba(var(--primary-rgb), .55);
+    color: var(--primary);
+    font-size: 1.6vh; font-weight: 700; letter-spacing: .03em;
+    transition: background .2s linear, border-color .2s linear, color .2s linear;
+  }
+  #ref.sounding {
+    background: rgba(var(--highlight-rgb), .15);
+    border-color: rgba(var(--highlight-rgb), .45);
+    color: var(--highlight);
+  }
+  #ref.err { color: var(--red); border-color: var(--red); }
+
+  /* ---- tap to start ---- */
+  #gate {
+    position: absolute; inset: 0; z-index: 5;
+    background: var(--wallpaper) fixed;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2.4vh;
+    text-align: center; padding: 0 12vw;
+  }
+  #gate.hidden { display: none; }
+  #gate svg { width: 22vh; height: 22vh; }
+  #gate p { color: var(--secondary); font-size: 1.9vh; line-height: 1.6; margin: 0; }
+  #gate button {
+    margin-top: 1vh; padding: 1.4vh 6vw;
+    background: rgba(var(--primary-rgb), .15);
+    color: var(--primary);
+    border: 1px solid rgba(var(--primary-rgb), .55);
+    border-radius: 999px;
+    font-size: 1.9vh; font-weight: 700; letter-spacing: .04em;
+  }
+  #gate button.ghost { border-color: rgba(var(--primary-rgb), .25); color: var(--secondary); }
+
+  /* ---- simulate drawer ---- */
+  #sim {
+    position: absolute; bottom: 0; left: 0; right: 0; z-index: 4;
+    background: var(--card);
+    border-top: 1px solid var(--cardborder);
+    padding: 2vh 6vw calc(2vh + env(safe-area-inset-bottom));
+    transform: translateY(100%); transition: transform .25s ease-out;
+  }
+  #sim.open { transform: translateY(0); }
+  #sim label {
+    display: block; color: var(--secondary);
+    font-size: 1.5vh; font-family: ui-monospace, Menlo, monospace;
+    margin: 0 0 1.2vh;
+  }
+  #sim input[type=range] { width: 100%; accent-color: var(--highlight); }
+  #amb { display: flex; gap: 2.6vw; margin-top: 2vh; }
+  #amb button {
+    flex: 1; padding: 1.1vh 0; border-radius: 999px;
+    font-size: 1.4vh; font-weight: 700;
+    background: rgba(var(--primary-rgb), .12);
+    border: 1px solid rgba(var(--primary-rgb), .4);
+    color: var(--primary);
+  }
+  #amb button.on {
+    background: rgba(var(--highlight-rgb), .18);
+    border-color: rgba(var(--highlight-rgb), .5);
+    color: var(--highlight);
+  }
+  #simtab {
+    position: absolute; top: 1.6vh; right: 4vw; z-index: 6;
+    font-size: 1.5vh; color: var(--secondary); opacity: .7;
+    font-family: ui-monospace, Menlo, monospace;
+    padding: 1vh 1.4vh;
+  }
+</style>
+</head>
+<body>
+
+<div id="simtab">simulate</div>
+
+<div id="face">
+  <div id="card">
+    <div id="dots"></div>
+
+    <div id="letterwrap">
+      <span id="idledot"></span><span id="letter"><span id="glyph">&nbsp;</span><span id="sharp">♯</span></span>
+    </div>
+
+    <div id="hz">—</div>
+    <div id="cents">&nbsp;</div>
+    <div id="level"></div>
+  </div>
+
+  <div id="ref">A₄ 440 Hz</div>
+</div>
+
+<div id="sim">
+  <label id="simlabel">deviation &nbsp;+0 ¢</label>
+  <input id="simrange" type="range" min="-50" max="50" step="1" value="0">
+  <label style="margin-top:2vh">note</label>
+  <input id="simnote" type="range" min="0" max="11" step="1" value="9">
+  <label style="margin-top:2vh">ambience</label>
+  <div id="amb"></div>
+</div>
+
+<div id="gate">
+  <svg viewBox="0 0 512 512" aria-hidden="true">
+    <defs><mask id="slot">
+      <rect width="512" height="512" fill="#fff"/>
+      <rect x="214" y="60" width="84" height="228" rx="42" fill="#000"/>
+    </mask></defs>
+    <rect width="512" height="512" rx="110" fill="#1E1A12"/>
+    <g mask="url(#slot)"><rect x="176" y="84" width="160" height="260" rx="80" fill="#F4EED8"/></g>
+    <rect x="238" y="330" width="36" height="116" rx="18" fill="#F4EED8"/>
+    <circle cx="256" cy="136" r="23" fill="#C87941"/>
+  </svg>
+  <p>Fiat Vox listens continuously.<br>It needs the microphone to hear you.<br><br>Tap the face to sound the note.</p>
+  <button id="listen">Listen</button>
+  <button id="justlook" class="ghost">Just look at it</button>
+</div>
+
+<script>
+/* ------------------------------------------------------------------
+   Fiat Vox — browser preview.
+   Same face, same YIN detector, same ambience-first colour model as the
+   Sailfish app: everything comes from the ambience except true/close/wrong.
+   ------------------------------------------------------------------ */
+
+const DOTS = 7;
+const CENTS_RANGE = 25;
+const CENTRE = (DOTS - 1) / 2;
+const PER_DOT = CENTS_RANGE / CENTRE;          // 8.33 cents per dot
+
+const LETTERS = ["C","C","D","D","E","F","F","G","G","A","A","B"];
+const SHARP   = [0,1,0,1,0,0,1,0,1,0,1,0];
+const REFS    = [415,430,432,435,438,440,441,442,443];
+
+/* ---- ambiences ----------------------------------------------------
+   Stand-ins for the real thing. Each sets a colour scheme, an accent and
+   a wallpaper; the card, the text and the pill all follow.               */
+const AMBIENCES = [
+  { name: 'Jolla',    dark: true,  hl: '122,199,222',
+    wall: 'radial-gradient(120% 90% at 50% 0%, #2a3742 0%, #10161c 70%)' },
+  { name: 'Darkroom', dark: true,  hl: '200,121,65',
+    wall: 'radial-gradient(120% 90% at 50% 0%, #3a2c1e 0%, #15110b 70%)' },
+  { name: 'Paper',    dark: false, hl: '74,95,191',
+    wall: 'radial-gradient(120% 90% at 50% 0%, #f2efe8 0%, #d8d2c6 75%)' },
+  { name: 'Meadow',   dark: false, hl: '46,125,91',
+    wall: 'radial-gradient(120% 90% at 50% 0%, #eef3ea 0%, #cbd8c6 75%)' }
+];
+
+let ambience = AMBIENCES[0];
+
+function applyAmbience(a) {
+  ambience = a;
+  const r = document.documentElement.style;
+  r.setProperty('--primary-rgb',   a.dark ? '255,255,255' : '26,26,26');
+  r.setProperty('--highlight-rgb', a.hl);
+  r.setProperty('--card',          a.dark ? 'rgb(20,20,20)' : 'rgb(245,245,245)');
+  r.setProperty('--wallpaper',     a.wall);
+  // Meaning stays put; only the shade shifts so it keeps its contrast.
+  r.setProperty('--green', a.dark ? '#7FA65C' : '#41682A');
+  r.setProperty('--amber', a.dark ? '#C87941' : '#8F4E1B');
+  r.setProperty('--red',   a.dark ? '#A0403A' : '#8A2B25');
+
+  [...document.querySelectorAll('#amb button')]
+    .forEach(b => b.classList.toggle('on', b.dataset.name === a.name));
+
+  // colours are read live, so repaint whatever is on screen
+  refresh();
+}
+
+const ambBox = document.getElementById('amb');
+AMBIENCES.forEach(a => {
+  const b = document.createElement('button');
+  b.textContent = a.name;
+  b.dataset.name = a.name;
+  b.addEventListener('click', () => applyAmbience(a));
+  ambBox.appendChild(b);
+});
+
+function col(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+// ---- build the dot row ----
+const dotsEl = document.getElementById('dots');
+const dotEls = [];
+for (let i = 0; i < DOTS; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === CENTRE ? ' centre' : '');
+  d.innerHTML = '<b></b><i></i>';
+  dotsEl.appendChild(d);
+  dotEls.push(d);
+}
+
+function dotColour(i) {
+  const dist = Math.abs(i - CENTRE);
+  if (dist === 0) return col('--green');
+  if (dist === 1) return col('--amber');
+  return col('--red');
+}
+
+const el = {
+  letterwrap: document.getElementById('letterwrap'),
+  letter: document.getElementById('letter'),
+  glyph:  document.getElementById('glyph'),
+  sharp:  document.getElementById('sharp'),
+  hz:     document.getElementById('hz'),
+  cents:  document.getElementById('cents'),
+  ref:    document.getElementById('ref'),
+  level:  document.getElementById('level')
+};
+
+let referenceA = 440;
+let simulating = false;
+let last = { hasPitch: false, noteIndex: 9, octave: 4, cents: 0, frequency: 0, level: 0 };
+
+function render(state) {
+  last = {
+    hasPitch: !!state.hasPitch,
+    noteIndex: state.noteIndex === undefined ? last.noteIndex : state.noteIndex,
+    octave: state.octave === undefined ? last.octave : state.octave,
+    cents: state.cents === undefined ? last.cents : state.cents,
+    frequency: state.frequency === undefined ? last.frequency : state.frequency,
+    level: state.level === undefined ? last.level : state.level
+  };
+
+  const lit = last.hasPitch
+    ? Math.max(0, Math.min(DOTS - 1, Math.round(last.cents / PER_DOT) + CENTRE))
+    : -1;
+
+  for (let i = 0; i < DOTS; i++) {
+    const on = i === lit;
+    dotEls[i].classList.toggle('lit', on);
+    const c = on ? dotColour(i) : col('--dotidle');
+    dotEls[i].querySelector('i').style.background = c;
+    dotEls[i].querySelector('b').style.background = on ? dotColour(i) : 'transparent';
+  }
+
+  el.letterwrap.classList.toggle('live', last.hasPitch);
+  el.hz.classList.toggle('live', last.hasPitch);
+  el.glyph.innerHTML = last.hasPitch ? LETTERS[last.noteIndex] : '&nbsp;';
+  el.sharp.classList.toggle('on', last.hasPitch && !!SHARP[last.noteIndex]);
+  el.hz.textContent = last.hasPitch ? last.frequency.toFixed(1) + ' Hz' : '—';
+
+  if (last.hasPitch) {
+    const c = Math.round(last.cents);
+    el.cents.textContent = (c > 0 ? '+' : '') + c + ' ¢';
+    el.cents.style.color = (lit === CENTRE) ? col('--green') : col('--secondary');
+  } else {
+    el.cents.innerHTML = '&nbsp;';
+    el.cents.style.color = col('--secondary');
+  }
+
+  const cardW = document.getElementById('card').clientWidth;
+  el.level.style.width = Math.max(2, cardW * 0.5 * (last.level || 0)) + 'px';
+}
+
+function refresh() { render(last); updateRef(); }
+
+function noteFrom(freq) {
+  const midi = 69 + 12 * Math.log2(freq / referenceA);
+  const nearest = Math.round(midi);
+  return {
+    cents: (midi - nearest) * 100,
+    noteIndex: ((nearest % 12) + 12) % 12,
+    octave: Math.floor(nearest / 12) - 1
+  };
+}
+
+// ---- reference pitch: tap the pill to cycle ----
+el.ref.addEventListener('click', (e) => {
+  e.stopPropagation();
+  referenceA = REFS[(REFS.indexOf(referenceA) + 1) % REFS.length];
+  updateRef();
+});
+
+function updateRef() {
+  el.ref.classList.toggle('sounding', sounding);
+  el.ref.textContent = sounding
+    ? 'SOUNDING ' + toneHz.toFixed(1) + ' Hz'
+    : 'A₄ ' + referenceA + ' Hz';
+}
+
+/* ------------------------------------------------------------------
+   YIN — the same five steps as src/pitchdetector.cpp, trimmed a little
+   so it stays comfortable in JavaScript on a phone.
+   ------------------------------------------------------------------ */
+const YIN_THRESHOLD = 0.15;
+const YIN_REJECT = 0.55;
+const WINDOW = 1536;
+let diff = null, cmnd = null;
+
+function detectPitch(x, sampleRate) {
+  const tauMax = Math.min(Math.floor(sampleRate / 50), x.length - WINDOW);
+  const tauMin = Math.max(2, Math.floor(sampleRate / 2100));
+  if (tauMax <= tauMin) return 0;
+
+  if (!diff || diff.length < tauMax + 2) {
+    diff = new Float32Array(tauMax + 2);
+    cmnd = new Float32Array(tauMax + 2);
+  }
+
+  for (let tau = 1; tau <= tauMax; tau++) {
+    let acc = 0;
+    for (let j = 0; j < WINDOW; j++) {
+      const d = x[j] - x[j + tau];
+      acc += d * d;
+    }
+    diff[tau] = acc;
+  }
+
+  cmnd[0] = 1;
+  let running = 0;
+  for (let tau = 1; tau <= tauMax; tau++) {
+    running += diff[tau];
+    cmnd[tau] = running > 0 ? (diff[tau] * tau / running) : 1;
+  }
+
+  let tau = -1;
+  for (let t = tauMin; t <= tauMax; t++) {
+    if (cmnd[t] < YIN_THRESHOLD) {
+      while (t + 1 <= tauMax && cmnd[t + 1] < cmnd[t]) t++;
+      tau = t;
+      break;
+    }
+  }
+  if (tau < 0) {
+    let best = YIN_REJECT;
+    for (let t = tauMin; t <= tauMax; t++) {
+      if (cmnd[t] < best) { best = cmnd[t]; tau = t; }
+    }
+    if (tau < 0) return 0;
+  }
+
+  let betterTau = tau;
+  if (tau > 0 && tau < tauMax) {
+    const s0 = cmnd[tau - 1], s1 = cmnd[tau], s2 = cmnd[tau + 1];
+    const denom = 2 * (2 * s1 - s2 - s0);
+    if (Math.abs(denom) > 1e-9) betterTau = tau + (s2 - s0) / denom;
+  }
+  return betterTau > 0 ? sampleRate / betterTau : 0;
+}
+
+/* ------------------------------------------------------------------
+   The reference tone — stämton.
+   Sine with a little octave and twelfth on top, because a pure sine
+   vanishes on a phone speaker. 15 ms ramps so it never clicks.
+   ------------------------------------------------------------------ */
+let actx = null, osc = null, toneGain = null, toneTimer = null;
+let sounding = false, toneHz = 440;
+
+function audioCtx() {
+  if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+  return actx;
+}
+
+// What the note on screen *should* be, not what was measured.
+function toneFrequency() {
+  if (!last.hasPitch) return referenceA;
+  const midi = (last.octave + 1) * 12 + last.noteIndex;
+  let hz = referenceA * Math.pow(2, (midi - 69) / 12);
+  while (hz < 110) hz *= 2;      // a phone speaker cannot do a 33 Hz pedal note
+  while (hz >= 1760) hz /= 2;
+  return hz;
+}
+
+function startTone(hz) {
+  const c = audioCtx();
+  if (c.state === 'suspended') c.resume();
+  toneHz = hz;
+
+  const real = new Float32Array([0, 1.0, 0.35, 0.15]);
+  const imag = new Float32Array(real.length);
+  osc = c.createOscillator();
+  osc.setPeriodicWave(c.createPeriodicWave(real, imag));
+  osc.frequency.value = hz;
+
+  toneGain = c.createGain();
+  toneGain.gain.setValueAtTime(0.0001, c.currentTime);
+  toneGain.gain.linearRampToValueAtTime(0.28, c.currentTime + 0.015);
+
+  osc.connect(toneGain).connect(c.destination);
+  osc.start();
+
+  sounding = true;
+  el.letterwrap.classList.add('sounding');
+  updateRef();
+  toneTimer = setTimeout(stopTone, 60000);   // never sing in a pocket
+}
+
+function stopTone() {
+  clearTimeout(toneTimer);
+  if (osc && actx) {
+    const t = actx.currentTime;
+    toneGain.gain.cancelScheduledValues(t);
+    toneGain.gain.setValueAtTime(toneGain.gain.value, t);
+    toneGain.gain.linearRampToValueAtTime(0.0001, t + 0.015);
+    osc.stop(t + 0.05);
+  }
+  osc = null; toneGain = null;
+  sounding = false;
+  el.letterwrap.classList.remove('sounding');
+  updateRef();
+}
+
+// Tap the card. Invisible on purpose.
+document.getElementById('card').addEventListener('click', () => {
+  sounding ? stopTone() : startTone(toneFrequency());
+});
+
+/* ---- microphone ---- */
+let smooth = 0, lastPitchAt = 0, holding = false;
+const HOLD_MS = 1200;
+const SILENCE_RMS = 0.006;
+
+async function startListening() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+    });
+    const ctx = audioCtx();
+    await ctx.resume();
+    const src = ctx.createMediaStreamSource(stream);
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 4096;
+    analyser.smoothingTimeConstant = 0;
+    src.connect(analyser);
+
+    const buf = new Float32Array(analyser.fftSize);
+    document.getElementById('gate').classList.add('hidden');
+
+    setInterval(() => {
+      // Do not listen to ourselves while the reference tone is sounding.
+      if (simulating || sounding) return;
+      analyser.getFloatTimeDomainData(buf);
+
+      let mean = 0;
+      for (let i = 0; i < buf.length; i++) mean += buf[i];
+      mean /= buf.length;
+      let energy = 0;
+      for (let i = 0; i < buf.length; i++) { buf[i] -= mean; energy += buf[i] * buf[i]; }
+      const rms = Math.sqrt(energy / buf.length);
+      const level = Math.min(1, rms * 6);
+
+      const idle = () => {
+        if (holding && performance.now() - lastPitchAt > HOLD_MS) { holding = false; smooth = 0; }
+        render(holding
+          ? Object.assign({ hasPitch: true, frequency: smooth, level: level }, noteFrom(smooth))
+          : { hasPitch: false, level: level });
+      };
+
+      if (rms < SILENCE_RMS) { idle(); return; }
+
+      const f = detectPitch(buf, ctx.sampleRate);
+      if (f <= 0) { idle(); return; }
+
+      lastPitchAt = performance.now();
+      if (smooth > 0 && Math.abs(Math.log(f / smooth)) < 0.06) {
+        const a = 0.35;
+        smooth = Math.exp(a * Math.log(f) + (1 - a) * Math.log(smooth));
+      } else {
+        smooth = f;
+      }
+      holding = true;
+      render(Object.assign({ hasPitch: true, frequency: smooth, level: level }, noteFrom(smooth)));
+    }, 45);
+
+  } catch (e) {
+    document.getElementById('gate').classList.add('hidden');
+    el.ref.classList.add('err');
+    openSim();
+  }
+}
+
+/* ---- simulate drawer: check every colour without playing anything ---- */
+const simEl = document.getElementById('sim');
+const simRange = document.getElementById('simrange');
+const simNote = document.getElementById('simnote');
+const simLabel = document.getElementById('simlabel');
+
+function simRender() {
+  const cents = parseFloat(simRange.value);
+  const idx = parseInt(simNote.value, 10);
+  const midi = 60 + idx;
+  const freq = referenceA * Math.pow(2, (midi + cents / 100 - 69) / 12);
+  simLabel.innerHTML = 'deviation &nbsp;' + (cents > 0 ? '+' : '') + cents + ' ¢';
+  render({ hasPitch: true, frequency: freq, cents: cents, noteIndex: idx, octave: 4, level: 0.5 });
+}
+function openSim() { simulating = true; simEl.classList.add('open'); simRender(); }
+function closeSim() { simulating = false; simEl.classList.remove('open'); }
+
+simRange.addEventListener('input', simRender);
+simNote.addEventListener('input', simRender);
+document.getElementById('simtab').addEventListener('click', () => {
+  simEl.classList.contains('open') ? closeSim() : openSim();
+});
+
+document.getElementById('listen').addEventListener('click', startListening);
+document.getElementById('justlook').addEventListener('click', () => {
+  document.getElementById('gate').classList.add('hidden');
+  openSim();
+});
+
+applyAmbience(AMBIENCES[0]);
+render({ hasPitch: false, level: 0 });
+</script>
+</body>
+</html>

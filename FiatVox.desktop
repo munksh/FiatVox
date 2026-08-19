@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Icon=FiatVox
+Exec=FiatVox
+Name=Fiat Vox
+Comment=Chromatic tuner
+
+# Sailjail sandboxing. Left out on purpose while sideloading:
+# unsandboxed apps get microphone access without any declaration, which is
+# what you want in the emulator and on a developer-mode device.
+#
+# Before submitting to Chum or the Jolla Store, restore the block below and
+# change Exec to:
+#     Exec=sailjail -p FiatVox.desktop /usr/bin/FiatVox
+#
+# [X-Sailjail]
+# OrganizationName=se.munkstolen
+# ApplicationName=FiatVox
+# Permissions=Audio;Microphone
