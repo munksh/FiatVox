@@ -1,9 +1,29 @@
+# Byggkataloger
 build*/
 RPMS/
 SRPMS/
+
+# QtCreator
 *.pro.user
+*.pro.user.*
 *.autosave
+
+# Sailfish SDK
+.sfdk/
+
+# qmake / make, in-source
 Makefile
-moc_*.cpp
-qrc_*.cpp
+Makefile.*
+.qmake.stash
 *.o
+moc_*.cpp
+moc_predefs.h
+qrc_*.cpp
+ui_*.h
+
+# den byggda binären (samma namn som projektet)
+/harbour-fiatvox
+
+# paket och genererade listor
+*.rpm
+*.list

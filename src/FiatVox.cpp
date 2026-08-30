@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 {
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     app->setOrganizationName(QStringLiteral("se.munkstolen"));
-    app->setApplicationName(QStringLiteral("FiatVox"));
+        app->setApplicationName(QStringLiteral("harbour-fiatvox"));
 
     QScopedPointer<QQuickView> view(SailfishApp::createView());
 
@@ -26,6 +26,8 @@ int main(int argc, char *argv[])
     // The reference tone. Sounding and listening at the same time would only
     // measure the app, so FiatVox.qml pauses the detector while it plays.
     TonePlayer tone;
+    view->rootContext()->setContextProperty(QStringLiteral("appVersion"),
+                                            QStringLiteral(APP_VERSION));
     view->rootContext()->setContextProperty(QStringLiteral("tone"), &tone);
 
     view->setSource(SailfishApp::pathToMainQml());

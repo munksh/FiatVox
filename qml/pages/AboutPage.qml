@@ -274,12 +274,13 @@ Page {
 
             Repeater {
                 model: [
-                    { name: "fiat lux", what: qsTr("let there be light — a light meter for film") },
-                    { name: "fiat vox", what: qsTr("let there be voice — this one") },
-                    { name: "fiat cor", what: qsTr("let there be heart — a metronome, after the first one anybody owns") },
-                    { name: "fiat mos", what: qsTr("let there be habit — a habit tracker") }
+                    { name: "fiat lux",    what: qsTr("let there be light — a light meter for film") },
+                    { name: "fiat vox",    what: qsTr("let there be voice — this one") },
+                    { name: "fiat cor",    what: qsTr("let there be heart — a metronome, after the first one anybody owns") },
+                    { name: "fiat mos",    what: qsTr("let there be habit — a habit tracker") },
+                    { name: "fiat agenda", what: qsTr("let there be things to be done — a task list") },
+                    { name: "fiat margo",  what: qsTr("let there be an edge — see what an ambience keeps of a picture, and what it cuts") }
                 ]
-
                 Column {
                     x: Theme.horizontalPageMargin
                     width: content.width - Theme.horizontalPageMargin * 2
@@ -310,7 +311,7 @@ Page {
                 wrapMode: Text.WordWrap
                 font.pixelSize: Theme.fontSizeTiny
                 color: FiatVoxTheme.secondaryText
-                text: qsTr("Four instruments that measure something you would otherwise guess at. They share a look, a palette and a stubbornness about staying on your own phone.")
+                text: qsTr("Six instruments that measure something you would otherwise guess at. They share a look, a palette and a stubbornness about staying on your own phone.")
             }
 
             // -- Version ---------------------------------------------------
@@ -352,8 +353,11 @@ Page {
             MunkstolenMark {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: Theme.itemSizeMedium
+                height: width
                 frame: "ring"
                 color: FiatVoxTheme.makerMark
+                Component.onCompleted: requestPaint()
+                onWidthChanged: requestPaint()
             }
 
             Item { width: 1; height: Theme.paddingSmall }

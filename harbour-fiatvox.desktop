@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Icon=harbour-fiatvox
+Exec=harbour-fiatvox
+Name=fiat vox
+Comment=Chromatic tuner
+
+[X-Sailjail]
+OrganizationName=se.munkstolen
+ApplicationName=harbour-fiatvox
+Permissions=Audio;Microphone

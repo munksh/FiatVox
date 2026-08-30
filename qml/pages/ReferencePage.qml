@@ -2,28 +2,24 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import ".."
 
-/*
- * Den enda inställningen. Pills på ett kort — tryck på en så tillämpas den
- * och sidan poppar tillbaka. Ingen OK-knapp, inget att bekräfta.
- */
 Page {
     id: page
     allowedOrientations: Orientation.Portrait
 
     readonly property var references: [415, 430, 432, 435, 438, 440, 441, 442, 443]
 
-    // Varför just dessa nio, för den som undrar sen.
+    // Explanation for why these 9
     readonly property var notes: ({
-        415: "Barock",
-        430: "Wienklassicism",
-        432: "Verdi",
-        435: "Gammal fransk",
-        438: "1800-tal",
-        440: "Modern standard",
-        441: "Orkester",
-        442: "Orkester",
-        443: "Orkester"
-    })
+            415: "Baroque",
+            430: "Classical",
+            432: "Verdi",
+            435: "Old French",
+            438: "19th century",
+            440: "Modern standard",
+            441: "Orchestral",
+            442: "Orchestral",
+            443: "Orchestral"
+        })
 
     Rectangle {
         anchors.fill: parent
