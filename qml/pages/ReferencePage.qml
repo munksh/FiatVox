@@ -47,7 +47,7 @@ Page {
                     anchors.left: parent.left
                     anchors.leftMargin: Theme.horizontalPageMargin
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "referenston"
+                    text: "reference tone"
                     color: FiatVoxTheme.primaryText
                     font.pixelSize: Theme.fontSizeLarge
                     font.family: FiatVoxTheme.serif
