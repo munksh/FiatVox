@@ -2,9 +2,6 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import ".."
 
-/*
- * Covern fortsätter stämma. Ställ telefonen på notstället så funkar den ändå.
- */
 CoverBackground {
     id: cover
 
@@ -32,7 +29,6 @@ CoverBackground {
         return FiatVoxTheme.wrong
     }
 
-    // Målas bara i Fiat colours; annars äger ambiencen covern.
     Rectangle {
         anchors.fill: parent
         visible: !FiatVoxTheme.ambient
@@ -42,11 +38,65 @@ CoverBackground {
         }
     }
 
+    Label {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: FiatVoxTheme.coverWordmarkTop
+        text: "fiat vox"
+        color: FiatVoxTheme.secondaryText
+        font.pixelSize: Theme.fontSizeTiny
+        font.family: FiatVoxTheme.serif
+        font.italic: true
+    }
+
     Column {
-        anchors.centerIn: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.leftMargin: FiatVoxTheme.coverSideMargin
+        anchors.rightMargin: FiatVoxTheme.coverSideMargin
+        anchors.topMargin: cover.height * FiatVoxTheme.coverFigureFraction
         spacing: Theme.paddingMedium
 
-        // det försänkta spåret, i miniatyr
+        Item {
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: coverLetter.width
+            height: coverLetter.height
+            opacity: tuner.hasPitch ? 1.0 : 0.35
+            Behavior on opacity { NumberAnimation { duration: 300 } }
+
+            Rectangle {
+                anchors.centerIn: parent
+                visible: !tuner.hasPitch
+                width: coverLetter.font.pixelSize * 0.13
+                height: width
+                radius: width / 2
+                color: FiatVoxTheme.accent
+            }
+
+            Label {
+                id: coverLetter
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                text: tuner.hasPitch ? cover.noteLetters[tuner.noteIndex] : " "
+                color: FiatVoxTheme.accent
+                font.pixelSize: FiatVoxTheme.coverFigureSize
+                font.family: FiatVoxTheme.serif
+            }
+
+            Label {
+                anchors.left: coverLetter.right
+                anchors.leftMargin: -coverLetter.font.pixelSize * 0.03
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -coverLetter.font.pixelSize * 0.24
+                text: cover.sharpGlyph
+                color: Theme.rgba(FiatVoxTheme.accent, 0.7)
+                visible: tuner.hasPitch && cover.noteSharp[tuner.noteIndex]
+                font.pixelSize: coverLetter.font.pixelSize * 0.34
+                font.family: FiatVoxTheme.serif
+            }
+        }
+
         Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             width: coverDots.width + Theme.paddingMedium * 2
@@ -76,62 +126,8 @@ CoverBackground {
                 }
             }
         }
-
-        // Bokstaven centrerad på sig själv; korset hänger utanför högerkanten.
-        Item {
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: coverLetter.width
-            height: coverLetter.height
-            opacity: tuner.hasPitch ? 1.0 : 0.35
-            Behavior on opacity { NumberAnimation { duration: 300 } }
-
-            Rectangle {
-                anchors.centerIn: parent
-                visible: !tuner.hasPitch
-                width: coverLetter.font.pixelSize * 0.13
-                height: width
-                radius: width / 2
-                color: FiatVoxTheme.primaryText
-            }
-
-            Text {
-                id: coverLetter
-                text: tuner.hasPitch ? cover.noteLetters[tuner.noteIndex] : " "
-                color: tone.playing ? FiatVoxTheme.accent : FiatVoxTheme.primaryText
-                font.pixelSize: Theme.fontSizeHuge * 1.8
-                font.family: FiatVoxTheme.serif
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                Behavior on color { ColorAnimation { duration: 200 } }
-            }
-
-            Text {
-                text: cover.sharpGlyph
-                color: Theme.rgba(FiatVoxTheme.primaryText, 0.7)
-                visible: tuner.hasPitch && cover.noteSharp[tuner.noteIndex]
-                font.pixelSize: coverLetter.font.pixelSize * 0.34
-                font.family: FiatVoxTheme.serif
-                anchors.left: coverLetter.right
-                anchors.leftMargin: -coverLetter.font.pixelSize * 0.03
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: -coverLetter.font.pixelSize * 0.24
-            }
-        }
-
-        Text {
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: tone.playing
-                  ? tone.frequency.toFixed(1)
-                  : (tuner.hasPitch ? tuner.frequency.toFixed(1) : "fiat vox")
-            color: tone.playing ? FiatVoxTheme.accent : FiatVoxTheme.secondaryText
-            font.pixelSize: Theme.fontSizeExtraSmall
-            font.family: tone.playing || tuner.hasPitch ? "monospace" : FiatVoxTheme.serif
-            font.italic: !tone.playing && !tuner.hasPitch
-        }
     }
 
-    // Ljud tonen utan att öppna appen — för när telefonen redan står på
-    // notstället.
     CoverActionList {
         id: soundAction
 

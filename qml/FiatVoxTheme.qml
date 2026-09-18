@@ -82,7 +82,7 @@ QtObject {
 
     // Fiat Vox's accent: ink blue. It does not collide with this app's
     // semantic colours, which are green, amber and red -- see below.
-    readonly property color accent: ambient ? Theme.highlightColor : "#4A5FBF"
+    readonly property color accent: ambient ? Theme.highlightColor : "#007067"
 
     // ---- the shared paper ----
     readonly property color backgroundHigh: "#F2EFE8"
@@ -169,9 +169,15 @@ QtObject {
         try { p.secondaryColor = secondaryText } catch (e) { }
         try { p.highlightColor = accent } catch (e) { }
         try { p.secondaryHighlightColor = Theme.rgba(accent, 0.6) } catch (e) { }
-        try { p.highlightBackgroundColor = Theme.rgba(accent, 0.3) } catch (e) { }
+        try { p.highlightBackgroundColor = Theme.rgba(primaryText, 0.12) } catch (e) { }
         try { p.errorColor = wrong } catch (e) { }
         try { p.highlightDimmerColor = ambient ? Theme.highlightDimmerColor : backgroundLow } catch (e) { }
         try { p.overlayBackgroundColor = ambient ? Theme.overlayBackgroundColor : backgroundHigh } catch (e) { }
     }
+
+    // Cover layout
+    readonly property real coverWordmarkTop: Theme.paddingLarge
+    readonly property real coverSideMargin: Theme.paddingLarge
+    readonly property real coverFigureFraction: 0.28
+    readonly property real coverFigureSize: Theme.fontSizeHuge
 }
