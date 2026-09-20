@@ -3,20 +3,6 @@ import Sailfish.Silica 1.0
 import ".."
 import "../components"
 
-// Who made this, what it does with your data, and where it came from.
-//
-// Four questions in that order, and nothing else. No changelog, no donation
-// button, two links. Same form as Fiat Mos on purpose -- the family should
-// answer the same questions in the same order.
-//
-// The lead is three examples rather than a summary. "A chromatic tuner that
-// listens continuously" is accurate and says nothing; a drifting pipe, a new
-// string and a held vowel say the same thing and can be heard.
-//
-// The accuracy sentence sits in the lead rather than in a section of its own.
-// It is the second claim the app makes about itself, after privacy, and both
-// are written flat: a number you can check beats an adjective.
-
 Page {
     id: page
 
@@ -103,58 +89,59 @@ Page {
                 text: qsTr("<b>vox</b> — Latin, <i>voice</i>. The word behind <i>vox populi</i>, and behind the <i>Vox Humana</i>, the organ stop built to imitate a singer. Everything this app measures is something making a voice.")
             }
 
-            // -- The motto -------------------------------------------------
-            //
-            // It stands on its own. It does NOT explain the icon -- the icon is
-            // a tuning fork, and there is no arithmetic in it. Two good things
-            // next to each other is enough; a connection asserted where none
-            // exists is worse than none claimed.
+            Item { width: 1; height: Theme.paddingLarge }
+
+            Rectangle {
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: Theme.itemSizeSmall
+                height: 1
+                color: FiatVoxTheme.innerBorder
+            }
+
+            Item { width: 1; height: Theme.paddingMedium }
+
+            Column {
+                x: Theme.horizontalPageMargin
+                width: content.width - Theme.horizontalPageMargin * 2
+                spacing: Theme.paddingSmall
+
+                Label {
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: Theme.fontSizeSmall
+                    font.family: FiatVoxTheme.serif
+                    font.italic: true
+                    color: FiatVoxTheme.primaryText
+                    text: "Musica est exercitium arithmeticae\noccultum nescientis se numerare animi"
+                }
+
+                Label {
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                    color: FiatVoxTheme.secondaryText
+                    text: qsTr("Music is a hidden arithmetic exercise of a soul that does not know it is counting.")
+                }
+
+                Label {
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                    font.pixelSize: Theme.fontSizeExtraSmall
+                    color: FiatVoxTheme.secondaryText
+                    text: "Leibniz, 1712"
+                }
+            }
 
             Item { width: 1; height: Theme.paddingMedium }
 
             Rectangle {
-                x: Theme.horizontalPageMargin
-                width: content.width - Theme.horizontalPageMargin * 2
-                height: mottoColumn.height + Theme.paddingLarge * 2
-                radius: FiatVoxTheme.cardRadius
-                color: FiatVoxTheme.card
-                border.color: FiatVoxTheme.cardBorder
-                border.width: FiatVoxTheme.cardBorderWidth
-
-                Column {
-                    id: mottoColumn
-                    anchors.centerIn: parent
-                    width: parent.width - Theme.paddingLarge * 2
-                    spacing: Theme.paddingSmall
-
-                    Label {
-                        width: parent.width
-                        wrapMode: Text.WordWrap
-                        horizontalAlignment: Text.AlignHCenter
-                        font.pixelSize: Theme.fontSizeSmall
-                        font.family: FiatVoxTheme.serif
-                        font.italic: true
-                        color: FiatVoxTheme.primaryText
-                        text: "Musica est exercitium arithmeticae\noccultum nescientis se numerare animi"
-                    }
-
-                    Label {
-                        width: parent.width
-                        wrapMode: Text.WordWrap
-                        horizontalAlignment: Text.AlignHCenter
-                        font.pixelSize: Theme.fontSizeExtraSmall
-                        color: FiatVoxTheme.secondaryText
-                        text: qsTr("Music is a hidden arithmetic exercise of a soul that does not know it is counting.")
-                    }
-
-                    Label {
-                        width: parent.width
-                        horizontalAlignment: Text.AlignHCenter
-                        font.pixelSize: Theme.fontSizeTiny
-                        color: FiatVoxTheme.secondaryText
-                        text: "Leibniz, 1712"
-                    }
-                }
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: Theme.itemSizeSmall
+                height: 1
+                color: FiatVoxTheme.innerBorder
             }
 
             // -- Privacy ---------------------------------------------------
@@ -263,9 +250,6 @@ Page {
             }
 
             // -- The family ---------------------------------------------------
-            //
-            // Every name translates itself, and the translation explains the
-            // app. That is worth more than a tagline.
 
             SectionLabel {
                 x: Theme.horizontalPageMargin
@@ -274,31 +258,60 @@ Page {
 
             Repeater {
                 model: [
-                    { name: "fiat lux",    what: qsTr("let there be light — a light meter for film") },
-                    { name: "fiat vox",    what: qsTr("let there be voice — this one") },
-                    { name: "fiat cor",    what: qsTr("let there be heart — a metronome, after the first one anybody owns") },
-                    { name: "fiat mos",    what: qsTr("let there be habit — a habit tracker") },
-                    { name: "fiat agenda", what: qsTr("let there be things to be done — a task list") },
-                    { name: "fiat margo",  what: qsTr("let there be an edge — see what an ambience keeps of a picture, and what it cuts") }
+                    { name: "fiat agenda", what: qsTr("let there be doing — a task list"), icon: "images/family/harbour-fiatagenda.png", url: "https://openrepos.net/content/munkstolen/fiat-agenda-task-list" },
+                    { name: "fiat margo", what: qsTr("let there be edge — keeps edges"), icon: "images/family/harbour-fiatmargo.png", url: "https://openrepos.net/content/munkstolen/fiat-margo-keeps-edges" },
+                    { name: "fiat glossa", what: qsTr("let there be tongue — a translator"), icon: "images/family/harbour-fiatglossa.png", url: "https://openrepos.net/content/munkstolen/fiat-glossa-a-deepl-translator" },
+                    { name: "fiat vox", what: qsTr("let there be voice — this one"), icon: "images/family/harbour-fiatvox.png", url: "" },
+                    { name: "fiat pons", what: qsTr("let there be bridge — a native Qobuz client"), icon: "images/family/harbour-fiatpons.png", url: "https://openrepos.net/content/munkstolen/fiat-pons-native-qobuz-client" },
+                    { name: "fiat lux", what: qsTr("let there be light — a light meter for film - Coming soon"), icon: "images/family/harbour-fiatlux.png", url: "" },
+                    { name: "fiat cor", what: qsTr("let there be heart — a metronome"), icon: "images/family/harbour-fiatcor.png", url: "https://openrepos.net/content/munkstolen/fiat-cor-a-metronome" },
+                    { name: "fiat passus", what: qsTr("let there be step — a step counter - Coming soon"), icon: "images/family/harbour-fiatpassus.png", url: "" },
+                    { name: "fiat mos", what: qsTr("let there be habit — a habit tracker"), icon: "images/family/harbour-fiatmos.png", url: "https://openrepos.net/content/munkstolen/fiat-mos-habit-tracker" }
                 ]
-                Column {
+                delegate: BackgroundItem {
+                    id: familyRow
                     x: Theme.horizontalPageMargin
                     width: content.width - Theme.horizontalPageMargin * 2
+                    height: familyText.height
+                    enabled: modelData.url !== ""
+                    highlightedColor: FiatVoxTheme.highlightWash
+                    onClicked: Qt.openUrlExternally(modelData.url)
 
-                    Label {
-                        width: parent.width
-                        font.pixelSize: Theme.fontSizeSmall
-                        font.family: FiatVoxTheme.serif
-                        color: FiatVoxTheme.primaryText
-                        text: modelData.name
+
+                    readonly property real iconSlot: Theme.itemSizeSmall
+
+                    Image {
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: Math.min(familyText.height, familyRow.iconSlot)
+                        height: width
+                        source: Qt.resolvedUrl(modelData.icon)
+                        fillMode: Image.PreserveAspectFit
+                        smooth: true
+                        opacity: modelData.url !== "" ? 1.0 : 0.55
                     }
 
-                    Label {
-                        width: parent.width
-                        wrapMode: Text.WordWrap
-                        font.pixelSize: Theme.fontSizeExtraSmall
-                        color: FiatVoxTheme.secondaryText
-                        text: modelData.what
+                    Column {
+                        id: familyText
+                        anchors.left: parent.left
+                        anchors.leftMargin: familyRow.iconSlot + Theme.paddingMedium
+                        anchors.right: parent.right
+
+                        Label {
+                            width: parent.width
+                            font.pixelSize: Theme.fontSizeSmall
+                            font.family: FiatVoxTheme.serif
+                            color: modelData.url !== "" ? FiatVoxTheme.accent : FiatVoxTheme.primaryText
+                            text: modelData.name
+                        }
+
+                        Label {
+                            width: parent.width
+                            wrapMode: Text.WordWrap
+                            font.pixelSize: Theme.fontSizeExtraSmall
+                            color: FiatVoxTheme.secondaryText
+                            text: modelData.what
+                        }
                     }
                 }
             }
@@ -311,14 +324,10 @@ Page {
                 wrapMode: Text.WordWrap
                 font.pixelSize: Theme.fontSizeTiny
                 color: FiatVoxTheme.secondaryText
-                text: qsTr("Six instruments that measure something you would otherwise guess at. They share a look, a palette and a stubbornness about staying on your own phone.")
+                text: qsTr("Small instruments that each do one thing and leave the rest alone. They share a look, a palette and a stubbornness about staying on your own phone.")
             }
 
             // -- Version ---------------------------------------------------
-            //
-            // Last, because it is support and not identity. The number comes
-            // from the rpm spec by way of qmake, so it is the one the package
-            // was actually built with rather than one written down twice.
 
             SectionLabel {
                 x: Theme.horizontalPageMargin
@@ -334,10 +343,6 @@ Page {
             }
 
             // -- Colophon --------------------------------------------------
-            //
-            // A printer's mark at the end of a book: a short rule, the mark,
-            // the wordmark. Nothing here is tappable -- the links are up under
-            // "made by". This is the signature, not a button.
 
             Item { width: 1; height: Theme.itemSizeExtraSmall }
 

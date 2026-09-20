@@ -1,6 +1,6 @@
 Name:       harbour-fiatvox
 Summary:    Chromatic tuner
-Version:    1.0.0
+Version:    1.1
 Release:    1
 License:    MIT
 URL:        https://github.com/munksh/FiatVox

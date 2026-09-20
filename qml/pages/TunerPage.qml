@@ -14,7 +14,7 @@ Page {
     allowedOrientations: Orientation.Portrait
 
     // ---- konfiguration ---------------------------------------------------
-    // Sju prickar över +/- 25 cent: varje prick är värd ~8,3 cent.
+
     readonly property int dotCount: 7
     readonly property real centsRange: 25.0
     readonly property int centreDot: (dotCount - 1) / 2
@@ -46,9 +46,7 @@ Page {
     }
 
     // ---- stämtonen -------------------------------------------------------
-    // Vad tonen på skärmen *ska* vara, inte vad som uppmättes: en stämton är
-    // målet, inte misstaget. Utan detekterad ton ljuder ett rent A på aktuell
-    // referens — en stämgaffel i fickan.
+
     function toneFrequency() {
         if (!tuner.hasPitch)
             return tuner.referenceA
@@ -64,8 +62,7 @@ Page {
     }
 
     // ---- bakgrund --------------------------------------------------------
-    // Målas bara i Fiat colours. Under en ambience finns inget här, och
-    // bakgrundsbilden lyser igenom.
+
     Rectangle {
         anchors.fill: parent
         visible: !FiatVoxTheme.ambient
@@ -82,7 +79,11 @@ Page {
         PullDownMenu {
                     backgroundColor: FiatVoxTheme.surface
                     highlightColor: FiatVoxTheme.accent
-
+                    MenuItem {
+                        text: qsTr("About")
+                        color: FiatVoxTheme.primaryText
+                        onClicked: pageStack.animatorPush(Qt.resolvedUrl("AboutPage.qml"))
+                    }
                     MenuItem {
                         text: FiatVoxTheme.ambient ? "Fiat colours" : "Follow ambience"
                         color: FiatVoxTheme.primaryText
@@ -93,12 +94,6 @@ Page {
                         text: "Reference pitch — A" + "₄" + " " + Math.round(tuner.referenceA) + " Hz"
                         color: FiatVoxTheme.primaryText
                         onClicked: pageStack.animatorPush(Qt.resolvedUrl("ReferencePage.qml"))
-                    }
-
-                    MenuItem {
-                        text: qsTr("About")
-                        color: FiatVoxTheme.primaryText
-                        onClicked: pageStack.animatorPush(Qt.resolvedUrl("AboutPage.qml"))
                     }
                 }
 
