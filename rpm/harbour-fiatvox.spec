@@ -29,10 +29,11 @@ Custom:
   Repo: https://github.com/munksh/FiatVox
   PackagingRepo: https://github.com/munksh/FiatVox
 Icon: https://munkstolen.se/SFOS/fiat-vox/harbour-fiatvox.png
+PackageIcon: https://munkstolen.se/SFOS/harbour-fiatvox.png
 Screenshots:
- - https://munkstolen.se/SFOS/fiat-vox/fiat-vox1.png
- - https://munkstolen.se/SFOS/fiat-vox/fiat-vox2.png
- - https://munkstolen.se/SFOS/fiat-vox/fiat-vox3.png
+ - https://munkstolen.se/SFOS/fiatvox1.png
+ - https://munkstolen.se/SFOS/fiatvox2.png
+ - https://munkstolen.se/SFOS/fiatvox3.png
 Url:
   Homepage: https://munkstolen.se
   Help: https://github.com/munksh/FiatVox/issues
