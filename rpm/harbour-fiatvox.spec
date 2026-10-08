@@ -25,16 +25,17 @@ Categories:
  - AudioVideo
  - Audio
  - Utility
+AIRating: V
+AINote: Claude is my typist - I cross review with Mistral, and add the code once it looks good. Architecture, design, on-device testing, releases and maintenance by me; issues and input welcome.
 Custom:
   Repo: https://github.com/munksh/FiatVox
   PackagingRepo: https://github.com/munksh/FiatVox
-Icon: https://munkstolen.se/SFOS/fiat-vox/harbour-fiatvox.png
 PackageIcon: https://munkstolen.se/SFOS/harbour-fiatvox.png
 Screenshots:
  - https://munkstolen.se/SFOS/fiatvox1.png
  - https://munkstolen.se/SFOS/fiatvox2.png
  - https://munkstolen.se/SFOS/fiatvox3.png
-Url:
+Links:
   Homepage: https://munkstolen.se
   Help: https://github.com/munksh/FiatVox/issues
   Bugtracker: https://github.com/munksh/FiatVox/issues
