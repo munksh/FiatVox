@@ -10,8 +10,6 @@ CoverBackground {
     readonly property int centreDot: (dotCount - 1) / 2
     readonly property real centsPerDot: centsRange / centreDot
     readonly property string sharpGlyph: "♯"
-    readonly property var noteLetters: ["C", "C", "D", "D", "E", "F", "F", "G", "G", "A", "A", "B"]
-    readonly property var noteSharp:   [false, true, false, true, false, false, true, false, true, false, true, false]
 
     readonly property int litDot: {
         if (!tuner.hasPitch)
@@ -78,7 +76,7 @@ CoverBackground {
                 id: coverLetter
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
-                text: tuner.hasPitch ? cover.noteLetters[tuner.noteIndex] : " "
+                text: tuner.hasPitch ? Notation.base(tuner.noteIndex) : " "
                 color: FiatVoxTheme.accent
                 font.pixelSize: FiatVoxTheme.coverFigureSize
                 font.family: FiatVoxTheme.serif
@@ -91,7 +89,7 @@ CoverBackground {
                 anchors.verticalCenterOffset: -coverLetter.font.pixelSize * 0.24
                 text: cover.sharpGlyph
                 color: Theme.rgba(FiatVoxTheme.accent, 0.7)
-                visible: tuner.hasPitch && cover.noteSharp[tuner.noteIndex]
+                visible: tuner.hasPitch && Notation.sharp(tuner.noteIndex)
                 font.pixelSize: coverLetter.font.pixelSize * 0.34
                 font.family: FiatVoxTheme.serif
             }

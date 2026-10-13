@@ -166,7 +166,7 @@ Page {
                 wrapMode: Text.WordWrap
                 font.pixelSize: Theme.fontSizeExtraSmall
                 color: FiatVoxTheme.secondaryText
-                text: qsTr("The only thing it remembers between sessions is the reference pitch and whether you prefer Fiat colours. Two numbers. Close the app and everything it heard is gone.")
+                text: qsTr("The only things it remembers between sessions are the reference pitch, the note names and whether you prefer Fiat colours. Three small settings. Close the app and everything it heard is gone.")
             }
 
             // -- Who ---------------------------------------------------------

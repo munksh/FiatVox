@@ -1,1 +1,2 @@
 singleton FiatVoxTheme 1.0 FiatVoxTheme.qml
+singleton Notation 1.0 Notation.qml

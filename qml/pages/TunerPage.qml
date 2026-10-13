@@ -23,9 +23,6 @@ Page {
     // Om U+266F inte renderas på enhetens typsnitt, ändra till "#".
     readonly property string sharpGlyph: "♯"
 
-    readonly property var noteLetters: ["C", "C", "D", "D", "E", "F", "F", "G", "G", "A", "A", "B"]
-    readonly property var noteSharp:   [false, true, false, true, false, false, true, false, true, false, true, false]
-
     readonly property real bezelPad: Theme.paddingMedium
 
     // ---- levande tillstånd -----------------------------------------------
@@ -94,6 +91,12 @@ Page {
                         text: "Reference pitch — A" + "₄" + " " + Math.round(tuner.referenceA) + " Hz"
                         color: FiatVoxTheme.primaryText
                         onClicked: pageStack.animatorPush(Qt.resolvedUrl("ReferencePage.qml"))
+                    }
+
+                    MenuItem {
+                        text: "Note names — " + Notation.label()
+                        color: FiatVoxTheme.primaryText
+                        onClicked: pageStack.animatorPush(Qt.resolvedUrl("NamesPage.qml"))
                     }
                 }
 
@@ -229,7 +232,7 @@ Page {
 
                         Text {
                             id: letter
-                            text: tuner.hasPitch ? page.noteLetters[tuner.noteIndex] : " "
+                            text: tuner.hasPitch ? Notation.base(tuner.noteIndex) : " "
                             color: tone.playing ? FiatVoxTheme.accent : FiatVoxTheme.primaryText
                             font.pixelSize: Math.round(page.height * 0.22)
                             font.family: FiatVoxTheme.serif
@@ -241,7 +244,7 @@ Page {
                         Text {
                             text: page.sharpGlyph
                             color: Theme.rgba(FiatVoxTheme.primaryText, 0.7)
-                            visible: tuner.hasPitch && page.noteSharp[tuner.noteIndex]
+                            visible: tuner.hasPitch && Notation.sharp(tuner.noteIndex)
                             font.pixelSize: Math.round(letter.font.pixelSize * 0.34)
                             font.family: FiatVoxTheme.serif
                             anchors.left: letter.right

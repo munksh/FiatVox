@@ -45,3 +45,8 @@ DISTFILES += \
     README.md
 
 SAILFISHAPP_ICONS = 86x86 108x108 128x128 172x172
+
+DISTFILES += \
+    qml/Notation.qml \
+    qml/components/WordChoice.qml \
+    qml/pages/NamesPage.qml

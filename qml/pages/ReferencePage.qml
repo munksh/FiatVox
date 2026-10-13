@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "../components"
 import ".."
 
 Page {
@@ -8,7 +9,6 @@ Page {
 
     readonly property var references: [415, 430, 432, 435, 438, 440, 441, 442, 443]
 
-    // Explanation for why these 9
     readonly property var notes: ({
             415: "Baroque",
             430: "Classical",
@@ -58,53 +58,19 @@ Page {
             Rectangle {
                 x: Theme.horizontalPageMargin
                 width: parent.width - Theme.horizontalPageMargin * 2
-                height: flow.height + Theme.paddingLarge * 2
+                height: choice.height + Theme.paddingLarge * 2
                 radius: FiatVoxTheme.cardRadius
                 color: FiatVoxTheme.card
                 border.color: FiatVoxTheme.cardBorder
                 border.width: FiatVoxTheme.cardBorderWidth
 
-                Flow {
-                    id: flow
+                WordChoice {
+                    id: choice
                     anchors.centerIn: parent
                     width: parent.width - Theme.paddingLarge * 2
-                    spacing: Theme.paddingSmall
-
-                    Repeater {
-                        model: page.references
-
-                        Rectangle {
-                            id: pill
-                            readonly property bool selected:
-                                Math.round(tuner.referenceA) === modelData
-
-                            radius: height / 2
-                            color: selected ? FiatVoxTheme.pillFillActive : FiatVoxTheme.pillFill
-                            border.color: selected ? FiatVoxTheme.pillBorderActive : FiatVoxTheme.pillBorder
-                            border.width: 1
-                            width: pillLabel.width + Theme.paddingLarge * 2
-                            height: pillLabel.height + Theme.paddingMedium
-
-                            Behavior on color { ColorAnimation { duration: 150 } }
-
-                            Text {
-                                id: pillLabel
-                                anchors.centerIn: parent
-                                text: modelData
-                                color: pill.selected ? FiatVoxTheme.accent : FiatVoxTheme.primaryText
-                                font.pixelSize: Theme.fontSizeMedium
-                                font.weight: Font.Bold
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: {
-                                    tuner.referenceA = modelData
-                                    pageStack.pop()
-                                }
-                            }
-                        }
-                    }
+                    choices: page.references.map(function (hz) { return { label: String(hz), value: hz } })
+                    current: Math.round(tuner.referenceA)
+                    onChosen: tuner.referenceA = value
                 }
             }
 
