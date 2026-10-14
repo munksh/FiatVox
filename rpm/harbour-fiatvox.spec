@@ -1,6 +1,6 @@
 Name:       harbour-fiatvox
 Summary:    Chromatic tuner
-Version:    1.1
+Version:    1.2
 Release:    1
 License:    MIT
 URL:        https://github.com/munksh/FiatVox
@@ -35,6 +35,8 @@ Screenshots:
  - https://munkstolen.se/SFOS/fiatvox1.png
  - https://munkstolen.se/SFOS/fiatvox2.png
  - https://munkstolen.se/SFOS/fiatvox3.png
+ - https://munkstolen.se/SFOS/fiatvox4.png
+ - https://munkstolen.se/SFOS/fiatvox5.png
 Links:
   Homepage: https://munkstolen.se
   Help: https://github.com/munksh/FiatVox/issues
@@ -62,5 +64,17 @@ desktop-file-install --delete-original \
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 
 %changelog
-* Sun Aug 30 2026 Caesar Ivarsson <caesar@munkstolen.se> - 1.0.0-1
+* Wed Oct 14 2026 Caesar Prometheus Ivarsson <caesar@munkstolen.se> - 1.2-1
+- Note names: letters (C D E), solfège (Do Re Mi), Japanese (ハ ニ ホ) and Korean (다 라 마).
+- Reference pitch and note names are chosen as words; the page stays open so you can compare.
+- About: updated family list and links.
+
+* Mon Oct 05 2026 Caesar Prometheus Ivarsson <caesar@munkstolen.se> - 1.1-1
+- Renamed to harbour-fiatvox.
+- New accent colour, icon and cover.
+- About page in the family's house form, with the fiat family list.
+- Reference pitch page in English.
+- MIT licence.
+
+* Sun Aug 30 2026 Caesar Prometheus Ivarsson <caesar@munkstolen.se> - 1.0.0-1
 - First release.

@@ -1,14 +1,11 @@
 # Fiat Vox — chromatic tuner for Sailfish OS
-#
-# OBS: qmake, inte CMake. Efter ändringar här:
-# Build > Clean All, sedan Run qmake, sedan Build.
 
 TARGET = harbour-fiatvox
 
 CONFIG += sailfishapp
 QT += multimedia
 
-VERSION = 1.0.0
+VERSION = 1.2
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 SOURCES += \
